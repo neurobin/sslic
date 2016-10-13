@@ -43,20 +43,20 @@ chain_file | Path to CABUNDLE file
 #Example usage:
 
 ```sh
-USER='your username' PASS='your password' php sslic.php example.com signed.crt dom.key chain.key
+USER='your username' PASS='your password' php sslic.php example.com signed.crt dom.key chain.crt
 ```
 If you want to send email on success or failure, then
 
 ```sh
-USER='your username' PASS='your password' EMAIL='your email address' php sslic.php example.com signed.crt dom.key chain.key
+USER='your username' PASS='your password' EMAIL='your email address' php sslic.php example.com signed.crt dom.key chain.crt
 ```
 
 The shell script **sslic** is a wrapper of the **sslic.php** script. It's provided for convenience of use:
 
 ```sh
-USER='your username' PASS='your password' ./sslic example.com signed.crt dom.key chain.key
+USER='your username' PASS='your password' ./sslic example.com signed.crt dom.key chain.crt
 #Or with email
-USER='your username' PASS='your password' EMAIL='your email address' ./sslic example.com signed.crt dom.key chain.key
+USER='your username' PASS='your password' EMAIL='your email address' ./sslic example.com signed.crt dom.key chain.crt
 ```
 
 
