@@ -37,8 +37,8 @@ PASS='your password' EMAIL='your email address' php sslic.php example.com signed
 The shell script **sslic** is a wrapper of the **sslic.php** script. It's provided for convenience of use:
 
 ```sh
-PASS='your password' sslic example.com signed.crt dom.key chain.key
+PASS='your password' ./sslic example.com signed.crt dom.key chain.key
 #Or with email
-PASS='your password' EMAIL='your email address' sslic example.com signed.crt dom.key chain.key
+PASS='your password' EMAIL='your email address' ./sslic example.com signed.crt dom.key chain.key
 ```
 
