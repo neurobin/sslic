@@ -40,6 +40,8 @@ error_reporting(E_ALL);
 
 $help='
 SSL certificate installer for Cpanel
+Name: sslic
+Version: 0.0.1
 
 Usage:
 
