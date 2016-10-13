@@ -150,7 +150,8 @@ res(json_encode($response));
 
 // Error printing function
 function err($msg) {
-    $msg="$msg\n";
+    if(isset($GLOBALS['dom'])){ $tmp = $GLOBALS['dom']; $msg = "domain: $tmp\n$msg\n"; }
+    else { $msg = "$msg\n"; }
     error_log($msg,0);
     if(isset($GLOBALS['email'])){ mail($GLOBALS['email'],'Failed to install certificate in Cpanel',$msg); }
     exit(1);
@@ -158,7 +159,8 @@ function err($msg) {
 
 // Success message printing function
 function res($msg){
-    $msg="$msg\n";
+    if(isset($GLOBALS['dom'])){ $tmp = $GLOBALS['dom']; $msg = "domain: $tmp\n$msg\n"; }
+    else { $msg = "$msg\n"; }
     echo $msg;
     if(isset($GLOBALS['email'])){ mail($GLOBALS['email'],'Successfully installed certificate in Cpanel',$msg); }
 }
