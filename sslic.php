@@ -40,8 +40,8 @@ error_reporting(E_ALL);
 
 $help='
 SSL certificate installer for Cpanel
-Name: sslic
-Version: 0.0.1
+
+sslic 0.0.1
 
 Usage:
 
@@ -76,7 +76,8 @@ foreach($argv as $arg){
 }
 
 //Check whether it's a CLI session and parse args
-if(defined('STDIN')){
+$isCLI = ( $argc > 0 );
+if($isCLI){
     $tmp = getenv('EMAIL');
     if($tmp != FALSE)   { $GLOBALS['email'] = $tmp;} //optional parameter
     
