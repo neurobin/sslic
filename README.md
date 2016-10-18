@@ -1,7 +1,7 @@
 SSL certificate installer for Cpanel
 ===================================
 
-The PHP script takes required parameters and installs a SSL/TLS certificate using Cpanel UAPI's `install_ssl` function. It uses cURL to send payload to the UAPI.
+The PHP script takes required parameters and installs a SSL/TLS certificate using Cpanel UAPI's `install_ssl` function. It uses cURL to send payload to the UAPI. It uses Cpanel username and password to authenticate with the API. Connections to the API are made through HTTPS.
 
 An working example can be found [here](https://neurobin.org/docs/web/fully-automated-letsencrypt-integration-with-cpanel/#Download-sslic.php).
 
