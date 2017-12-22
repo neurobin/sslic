@@ -3,24 +3,24 @@
  * ****************** SSL certificate installer for Cpanel *********************
  * *****************************************************************************
  *            Copyright (c) 2015-2016 Md. Jahidul Hamid
- * 
+ *
  * -----------------------------------------------------------------------------
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- * 
+ *
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- * 
- *     * The names of its contributors may be used to endorse or promote 
+ *
+ *     * The names of its contributors may be used to endorse or promote
  *       products derived from this software without specific prior written
  *       permission.
- *       
+ *
  * Disclaimer:
- * 
+ *
  *     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *     AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *     IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -52,7 +52,7 @@ CLI:
         USER:  username
         PASS:  password
         EMAIL: email address
- 
+
 HTTP REQUEST:
     params:
         user: username
@@ -91,7 +91,7 @@ if($isCLI){
     } else {
         if(!$password){err('password can not be empty!!');}
     }
-    
+
     if(isset($argv[1])) { $dom      = $argv[1]; } else { err('$dom missing');   }
     if(isset($argv[2])) { $crt      = $argv[2]; } else { err('$crt missing');   }
     if(isset($argv[3])) { $key      = $argv[3]; } else { err('$key missing');   }
@@ -99,12 +99,12 @@ if($isCLI){
 } else {
     if(isset($_REQUEST['email']))   { $GLOBALS['email']    = $_REQUEST['email']; } //optional parameter
     if(isset($_REQUEST['token']))   { $GLOBALS['token']    = $_REQUEST['token']; } //optional parameter
-    
+
     if(!$GLOBALS['token']) {
         if(isset($_REQUEST['pass']))    { $GLOBALS['password'] = $_REQUEST['pass']; } else { err('pass is missing');  } //optional parameter
         if($GLOBALS['password'] == NULL || $GLOBALS['password'] == ''){err('password can not be empty!!');}
     }
-    
+
     if(isset($_REQUEST['user']))    { $username = $_REQUEST['user']; } else { err('user is missing');  }
     if($username == NULL || $username == ''){err('username can not be empty!!');}
     if(isset($_REQUEST['dom']))     { $dom      = $_REQUEST['dom'];  } else { err('dom is missing');   }
@@ -124,8 +124,8 @@ $request_uri = "https://$cpanel_host:2083/execute/SSL/install_ssl";
 $cpanel_request = [
     'cpanel_jsonapi_user' => $username,
     'cpanel_jsonapi_module' => 'SSL', // Use SSL module
-    'cpanel_jsonapi_func' => 'list_keys', // Call list_keys function
-    // 'cpanel_jsonapi_func' => 'install_ssl', // Call list_keys function
+    'cpanel_jsonapi_func' => 'install_ssl', // Call install_ssl function
+    //'cpanel_jsonapi_func' => 'list_keys', // Call list_keys function, for testing
     'cpanel_jsonapi_apiversion' => '3', // Use UAPI (instead of API 1 or 2)
 ];
 
@@ -143,7 +143,7 @@ if(!isset($chain)||$chain == '' ||$chain == NULL||!is_file($chain)){err('$chain 
 $cert_file = realpath($crt);
 $key_file = realpath($key);
 $chain_file = realpath($chain);
- 
+
 // Set up the payload to send to the server.
 $payload = array(
     'domain'    => $dom,
@@ -151,10 +151,10 @@ $payload = array(
     'key'       => file_get_contents($key_file),
     'cabundle'  => file_get_contents($chain_file)
 );
- 
+
 // Set up the CURL request object.
     $ch = curl_init();
-if (!token) {
+if (!$GLOBALS['token']) {
     curl_setopt( $ch, CURLOPT_URL, $request_uri );
     curl_setopt( $ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC );
     curl_setopt( $ch, CURLOPT_USERPWD, $username . ':' . $GLOBALS['password'] );
@@ -163,21 +163,21 @@ if (!token) {
     $payload = array_merge($payload, $cpanel_request);
 
     curl_setopt( $ch, CURLOPT_URL, $whm_request_uri );
-    $header[0] = 'Authorization: whm ' . $username . ':' . .$GLOBALS['token'];
-    curl_setopt($curl,CURLOPT_HTTPHEADER,$header);
+    $header[0] = 'Authorization: whm ' . $username . ':' . $GLOBALS['token'];
+    curl_setopt( $ch, CURLOPT_HTTPHEADER, $header);
 }
 curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, false );
 curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
-  
+
 // Set up a POST request with the payload.
 curl_setopt( $ch, CURLOPT_POST, true );
 curl_setopt( $ch, CURLOPT_POSTFIELDS, $payload );
 curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
- 
+
 // Make the call, and then terminate the CURL caller object.
 $curl_response = curl_exec( $ch );
 curl_close( $ch );
- 
+
 // Decode and validate output.
 $response = json_decode( $curl_response );
 if( empty( $response ) ) {
@@ -186,7 +186,7 @@ if( empty( $response ) ) {
     $msg = json_encode($response);
     err("The CURL call returned valid JSON, but reported errors: $msg");
 }
- 
+
 // Print and exit.
 res(json_encode($response));
 
