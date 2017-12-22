@@ -84,13 +84,10 @@ if($isCLI){
     $username = getenv('USER'); //taken from the environment variable USER.
 
     if(!$username){err('username can not be empty!!');}
-    if($token){
-        echo 'found token, using WHM API instead of cPanel API with basic authentication'.PHP_EOL
-        .'notice: token use requires WHM account not regular cpanel'.PHP_EOL
-        .'(usually for Reseller account, check with your hosting provider)';
-    } else {
-        if(!$password){err('password can not be empty!!');}
-    }
+    // If token given, use WHM API instead of cPanel API with basic authentication
+    // Notice: token use requires WHM account not regular cpanel
+    // (usually for Reseller account, check with your hosting provider)
+    if(!$token && !$password){err('password can not be empty!!');}
 
     if(isset($argv[1])) { $dom      = $argv[1]; } else { err('$dom missing');   }
     if(isset($argv[2])) { $crt      = $argv[2]; } else { err('$crt missing');   }
@@ -182,7 +179,10 @@ curl_close( $ch );
 $response = json_decode( $curl_response );
 if( empty( $response ) ) {
     err("The CURL call did not return valid JSON");
-} elseif ( !$response->status ) {
+} elseif (!$GLOBALS['token'] && !$response->status ) {
+    $msg = json_encode($response);
+    err("The CURL call returned valid JSON, but reported errors: $msg");
+} elseif ( !$response->result->status ) {
     $msg = json_encode($response);
     err("The CURL call returned valid JSON, but reported errors: $msg");
 }
