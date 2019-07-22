@@ -41,7 +41,7 @@ error_reporting(E_ALL);
 $help='
 SSL certificate installer for Cpanel
 
-sslic 0.0.2
+sslic 0.0.3
 
 Usage:
 
@@ -134,17 +134,23 @@ curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
 curl_setopt( $ch, CURLOPT_POST, true );
 curl_setopt( $ch, CURLOPT_POSTFIELDS, $payload );
 curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
- 
+//~ curl_setopt( $ch, CURLOPT_FAILONERROR, true);
+
+$msg = '';
+
 // Make the call, and then terminate the CURL caller object.
 $curl_response = curl_exec( $ch );
+if(curl_errno($ch)){
+    $msg .= "\n\nCurl error: " . curl_error($ch);
+}
 curl_close( $ch );
  
 // Decode and validate output.
 $response = json_decode( $curl_response );
 if( empty( $response ) ) {
-    err("The CURL call did not return valid JSON");
+    err("The CURL call did not return valid JSON. $msg");
 } elseif ( !$response->status ) {
-    $msg = json_encode($response);
+    $msg .= "\n\nJSON: \n" . json_encode($response);
     err("The CURL call returned valid JSON, but reported errors: $msg");
 }
  
@@ -155,7 +161,7 @@ res(json_encode($response));
 function err($msg) {
     if(isset($GLOBALS['dom'])){ $tmp = $GLOBALS['dom']; $msg = "domain: $tmp\n$msg\n"; }
     else { $msg = "$msg\n"; }
-    error_log($msg,0);
+    @error_log($msg,0);
     if(isset($GLOBALS['email'])){ mail($GLOBALS['email'],'Failed to install certificate in Cpanel',$msg); }
     exit(1);
 }
