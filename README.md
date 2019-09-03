@@ -61,6 +61,3 @@ USER='your username' PASS='your password' ./sslic example.com signed.crt dom.key
 USER='your username' PASS='your password' EMAIL='your email address' ./sslic example.com signed.crt dom.key chain.crt
 ```
 
-
-#Error handling
-Errors are put in the *error_log* file in the working directory.
